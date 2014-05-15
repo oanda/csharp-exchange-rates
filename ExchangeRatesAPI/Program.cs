@@ -48,7 +48,8 @@ public class OANDAExchangeRates_Main
                 quote: "EUR",
                 start: "2014-01-01",
                 end: "2014-01-05",
-                fields: new List<ExchangeRates.RatesFields> { ExchangeRates.RatesFields.Averages, ExchangeRates.RatesFields.Midpoint });
+                fields: new List<ExchangeRates.RatesFields> { ExchangeRates.RatesFields.Averages, 
+                                                              ExchangeRates.RatesFields.Midpoint });
 
         if (responseGetRatesWithFields.IsSuccessful)
         {
