@@ -189,7 +189,10 @@ namespace Oanda
                      writer.Write(jsonStr);
                      writer.Flush();
                      memStream.Position = 0;
-                     DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T), new DataContractJsonSerializerSettings { UseSimpleDictionaryFormat = true });
+                     DataContractJsonSerializer ser = new DataContractJsonSerializer(
+                                                            typeof(T), 
+                                                            new DataContractJsonSerializerSettings { 
+                                                            UseSimpleDictionaryFormat = true });
 
                      serializedObj = (T) ser.ReadObject(memStream);
                  }
