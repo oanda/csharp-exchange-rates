@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Web.Script.Serialization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Collections.Generic;
 using System.Reflection;
@@ -123,7 +123,7 @@ namespace Oanda
     {
         private string _strDate;
         [DataMember (Name = "date")]
-        private string strDate
+        private string StrDate
         {
             get
             {
@@ -161,9 +161,9 @@ namespace Oanda
 
     class Constants
     {
-        public const string defaultBaseURL = "https://www.oanda.com/rates/api/v1/";
-        public const string defaultProxyUrl = "";
-        public const int defaultProxyPort = 8080;
+        public const string DefaultBaseUrl = "https://www.oanda.com/rates/api/v1/";
+        public const string DefaultProxyUrl = "";
+        public const int DefaultProxyPort = 8080;
     }
 
     [DataContract]
@@ -189,7 +189,7 @@ namespace Oanda
                      writer.Write(jsonStr);
                      writer.Flush();
                      memStream.Position = 0;
-                     DataContractJsonSerializer ser = new DataContractJsonSerializer(
+                     var ser = new DataContractJsonSerializer(
                                                             typeof(T), 
                                                             new DataContractJsonSerializerSettings { 
                                                             UseSimpleDictionaryFormat = true });
@@ -203,9 +203,7 @@ namespace Oanda
             }
             catch (Exception e)
             {
-                serializedObj = new T();
-                serializedObj.IsSuccessful = false;
-                serializedObj.ErrorMessage = e.Message;
+                serializedObj = new T {IsSuccessful = false, ErrorMessage = e.Message};
             }
 
             return serializedObj;
@@ -276,7 +274,7 @@ namespace Oanda
         {
             var url = String.Format("{0}{1}", BaseUrl, requestName);
             var request = (HttpWebRequest)WebRequest.Create(url);
-            T response = new T();
+            var response = new T();
             string credentialHeader = String.Format("Bearer {0}", ApiKey);
             request.Method = "GET";
             request.ContentType = "application/json";
@@ -290,10 +288,10 @@ namespace Oanda
 
             try
             {
-                HttpWebResponse webresponse = (HttpWebResponse)request.GetResponse();
+                var webresponse = (HttpWebResponse)request.GetResponse();
                 response = ApiResponse.FromJson<T>(webresponse.GetResponseStream());                
             }
-            catch (System.Net.WebException e)
+            catch (WebException e)
             {
                 var errorResponse = ApiResponse.FromJson<ErrorResponse>(e.Response.GetResponseStream());
                 response.SetErrorFromResponse(errorResponse);
@@ -303,9 +301,9 @@ namespace Oanda
         }
 
         public ExchangeRates(string apiKey,
-            string baseUrl = Constants.defaultBaseURL,
-            string proxyUrl = Constants.defaultProxyUrl,
-            int proxyPort = Constants.defaultProxyPort)
+            string baseUrl = Constants.DefaultBaseUrl,
+            string proxyUrl = Constants.DefaultProxyUrl,
+            int proxyPort = Constants.DefaultProxyPort)
         {
             ApiKey = apiKey;
             BaseUrl = baseUrl;
@@ -332,12 +330,12 @@ namespace Oanda
             Type type = en.GetType();
             MemberInfo[] memInfo = type.GetMember(en.ToString());
 
-            if (memInfo != null && memInfo.Length > 0)
+            if (memInfo.Length > 0)
             {
                 object[] attrs = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute),
                         false);
 
-                if (attrs != null && attrs.Length > 0)
+                if (attrs.Length > 0)
                 {
                     return ((DescriptionAttribute)attrs[0]).Description;
                 }
@@ -354,7 +352,7 @@ namespace Oanda
                 string start = "",
                 string end = "")
         {
-            GetRatesResponse response = null;
+            GetRatesResponse response;
 
             try
             {
@@ -364,9 +362,7 @@ namespace Oanda
             }
             catch (Exception exception)
             {
-                response = new GetRatesResponse();
-                response.IsSuccessful = false;
-                response.ErrorMessage = exception.Message;
+                response = new GetRatesResponse {IsSuccessful = false, ErrorMessage = exception.Message};
             }
 
             return response;
@@ -424,8 +420,8 @@ namespace Oanda
         }
 
         private string RatesParamaterQueryString(
-                List<string> quote = default(List<string>),
-                List<RatesFields> fields = default(List<RatesFields>),
+                IEnumerable<string> quote = default(List<string>),
+                IEnumerable<RatesFields> fields = default(List<RatesFields>),
                 string decimalPlaces = "",
                 string date = "", 
                 string start = "",
@@ -433,33 +429,17 @@ namespace Oanda
             {
                 string response= "";
 
-                var prms = new List<KeyValuePair<string, string>>();//new Dictionary<string, string>();
-                var nonDefaultParams = new List<KeyValuePair<string, string>>();
+            var prms = quote.Select(q => new KeyValuePair<string, string>("quote", q)).ToList();//new Dictionary<string, string>();
+            prms.AddRange(fields.Select(f => new KeyValuePair<string, string>("fields", GetRatesFieldsDescription(f))));
 
-                foreach(var q in quote)
-                {
-                    prms.Add(new KeyValuePair<string, string>("quote", q));
-                }
-
-                foreach( var f in fields)
-                {
-                    prms.Add(new KeyValuePair<string, string>("fields", GetRatesFieldsDescription(f)));
-                }
-
-                prms.Add(new KeyValuePair<string, string>("decimal_places", decimalPlaces));
+            prms.Add(new KeyValuePair<string, string>("decimal_places", decimalPlaces));
                 prms.Add(new KeyValuePair<string, string>("date", date));
                 prms.Add(new KeyValuePair<string, string>("start", start));
                 prms.Add(new KeyValuePair<string, string>("end", end));
 
-                foreach (var item in prms)
-                {
-                    if( item.Value != "")
-                    {
-                        nonDefaultParams.Add(new KeyValuePair<string, string>(item.Key, item.Value)); 
-                    }
-                }
+            var nonDefaultParams = (from item in prms where item.Value != "" select new KeyValuePair<string, string>(item.Key, item.Value)).ToList();
 
-                bool first = true;
+            bool first = true;
 
                 foreach (var par in nonDefaultParams)
                 {
@@ -479,7 +459,7 @@ namespace Oanda
 
         public GetCurrenciesResponse GetCurrencies()
         {
-            GetCurrenciesResponse response = null;
+            GetCurrenciesResponse response;
 
             try
             {
@@ -487,9 +467,7 @@ namespace Oanda
             }
             catch (Exception exception)
             {
-                response = new GetCurrenciesResponse();
-                response.IsSuccessful = false;
-                response.ErrorMessage = exception.Message;
+                response = new GetCurrenciesResponse {IsSuccessful = false, ErrorMessage = exception.Message};
             }
 
             return response;
@@ -497,7 +475,7 @@ namespace Oanda
 
         public RemainingQuotesResponse GetRemainingQuotes()
         {
-            RemainingQuotesResponse response = null;
+            RemainingQuotesResponse response;
 
             try
             {
@@ -505,9 +483,7 @@ namespace Oanda
             }
             catch (Exception exception)
             {
-                response = new RemainingQuotesResponse();
-                response.IsSuccessful = false;
-                response.ErrorMessage = exception.Message;
+                response = new RemainingQuotesResponse {IsSuccessful = false, ErrorMessage = exception.Message};
             }
 
             return response;
