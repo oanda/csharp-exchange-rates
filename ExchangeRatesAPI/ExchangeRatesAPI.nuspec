@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ExchangeRatesAPI</id>
+    <version>1.0.0</version>
+    <authors>aterreno</authors>
+    <owners>aterreno</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/oanda/csharp-exchange-rates</projectUrl>    
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>OANDA Exchange Rates API client class for C#</description>
+    <releaseNotes>First realease to nuget.</releaseNotes>
+    <copyright>This software is copyright (c) 2014 by OANDA Corporation and distributed under MIT License.</copyright>
+    <tags>OANDA Exchange Rates API</tags>
+    <dependencies>      
+    </dependencies>
+  </metadata>
+</package>
