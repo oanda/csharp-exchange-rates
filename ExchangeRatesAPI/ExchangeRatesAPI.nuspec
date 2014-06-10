@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>ExchangeRatesAPI</id>
+    <id>C#ExchangeRatesAPI</id>
     <version>1.0.0</version>
-    <authors>aterreno</authors>
-    <owners>aterreno</owners>
+    <authors>pmelendez</authors>
+    <owners>pmelendez</owners>
     <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
     <projectUrl>https://github.com/oanda/csharp-exchange-rates</projectUrl>    
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
