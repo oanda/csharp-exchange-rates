@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>C#ExchangeRatesAPI</id>
-    <version>1.0.0</version>
+    <id>CSharpExchangeRatesAPI</id>
+    <version>1.0.1</version>
     <authors>pmelendez</authors>
     <owners>pmelendez</owners>
     <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
