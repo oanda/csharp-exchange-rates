@@ -161,7 +161,8 @@ namespace Oanda
 
     class Constants
     {
-        public const string DefaultBaseUrl = "https://www.oanda.com/rates/api/v1/";
+        //public const string defaultBaseURL = "https://www.oanda.com/rates/api/v1/";
+        public const string defaultBaseURL = "https://web-services.oanda.com/rates/api/v1/";
         public const string DefaultProxyUrl = "";
         public const int DefaultProxyPort = 8080;
     }
