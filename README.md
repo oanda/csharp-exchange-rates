@@ -1,3 +1,5 @@
+## NOTE: this repository is deprecated in favour of generating your own API client code using our OpenAPI specification, please refer to the documentation at https://developer.oanda.com/exchange-rates-api/#sample-code
+
 csharp-exchange-rates
 =====================
 
